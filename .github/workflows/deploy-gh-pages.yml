@@ -1,41 +1,41 @@
-Nombre: Implementación automática en GitHub Pages
+name: Autodeploy to GitHub Pages
 
-en:
-  empujar:
-    sucursales:
-      - maestro
+on:
+  push:
+    branches:
+      - master
 
-empleos:
-  desplegar:
+jobs:
+  deploy:
     runs-on: ubuntu-latest
 
-    pasos:
-    - nombre: Código de pago
-      Usos: acciones/checkout@v2
-      con:
-        profundidad de búsqueda: 0
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
-    - nombre: Configurar Git
-      correr: |
+    - name: Set up Git
+      run: |
         git config --global user.name 'GitHub Actions'
         git config --global user.email 'actions@github.com'
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
 
-    - nombre: Eliminar la rama gh-pages del repositorio remoto
-      correr: |
+    - name: Delete gh-pages branch from remote
+      run: |
         git push origin --delete gh-pages || true
 
-    - nombre: Crear nueva rama gh-pages
-      correr: |
+    - name: Create new gh-pages branch
+      run: |
         git checkout --orphan gh-pages
 
-    - nombre: Agregar todos los archivos a gh-pages
-      correr: |
+    - name: Add all files to gh-pages
+      run: |
         git add --all
-        git commit -m "Desplegar en gh-pages"
+        git commit -m "Deploy to gh-pages"
 
-    - nombre: Enviar a la rama gh-pages
-      correr: |
+    - name: Push to gh-pages branch
+      run: |
         git push origin gh-pages --force
-      entorno:
-        GITHUB_TOKEN: ${{ secretos.GITHUB_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
